@@ -1,26 +1,78 @@
 {
-  "name": "متجر محلات الشيباني",
+  "id": "/",
+  "name": "محلات الشيباني للبهارات والأعشاب الطبيعية",
   "short_name": "الشيباني",
-  "description": "متجر البهارات والأعشاب الطبيعية",
+  "description": "متجر محلات الشيباني للبهارات والأعشاب الطبيعية. تسوق المنتجات الطبيعية وأرسل طلبك بسهولة.",
   "lang": "ar",
   "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#fbf8f1",
-  "theme_color": "#1e432e",
+  "orientation": "any",
+  "background_color": "#1e432e",
+  "theme_color": "#244b35",
+  "categories": [
+    "shopping",
+    "food",
+    "lifestyle"
+  ],
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "./icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/store-welcome-mobile.webp",
+      "sizes": "1024x1536",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "واجهة الترحيب الرئيسية لمتجر الشيباني على الهاتف"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "تصفح منتجات المتجر",
+      "short_name": "المتجر",
+      "description": "افتح المنتجات وسلة التسوق مباشرة.",
+      "url": "/?shortcut=shop",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "دخول لوحة الإدارة",
+      "short_name": "الإدارة",
+      "description": "افتح شاشة دخول المشرف المحمية بتسجيل Supabase.",
+      "url": "/?shortcut=admin",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
 }

@@ -1,6 +1,6 @@
 /* Shibani Store offline shell cache. Never cache Supabase API/auth responses. */
-const CACHE_VERSION = 'shibani-offline-v4-logo-address';
-const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icon-192.svg', './icon-512.svg', './icon-192.png', './icon-512.png', './assets/logo-shaibani.png'];
+const CACHE_VERSION = 'shibani-offline-v5-pwa-metadata-icons';
+const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icon-192.svg', './icon-512.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon.ico', './assets/logo-shaibani.png'];
 const STATIC_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {

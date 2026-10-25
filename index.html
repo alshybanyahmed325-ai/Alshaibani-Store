@@ -3,12 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#1e432e">
+<meta name="theme-color" content="#244b35">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" href="./icon-192.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <meta name="description" content="متجر محلات الشيباني للبهارات والأعشاب الطبيعية — تسوق أجود البهارات والأعشاب الطبيعية وأرسل طلبك بسهولة.">
 <title>محلات الشيباني | للبهارات والأعشاب الطبيعية</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='47' fill='%231e432e' stroke='%23d9ad52' stroke-width='5'/%3E%3Ctext x='50' y='67' text-anchor='middle' font-size='52' fill='%23d9ad52' font-family='Tahoma,Arial'%3Eش%3C/text%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -4225,5 +4227,25 @@ initCloud().then(() => { renderProducts(); return loadProductSocialStats(); });
 })();
 </script>
 
+
+<script>
+// PWABuilder shortcuts: use the existing storefront and protected admin sign-in; never bypass Supabase auth.
+(function () {
+  const shortcut = new URLSearchParams(window.location.search).get('shortcut');
+  if (shortcut !== 'shop' && shortcut !== 'admin') return;
+  const runShortcut = function () {
+    if (shortcut === 'shop' && typeof window.enterStore === 'function') {
+      window.enterStore();
+    } else if (shortcut === 'admin' && typeof window.openAdmin === 'function') {
+      window.openAdmin();
+    }
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runShortcut, { once: true });
+  } else {
+    window.setTimeout(runShortcut, 0);
+  }
+})();
+</script>
 </body>
 </html>
