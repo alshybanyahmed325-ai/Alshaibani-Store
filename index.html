@@ -27,10 +27,9 @@
   <div class="login-card">
     <div class="login-brand"><div class="mark">ش</div><div><strong style="display:block;color:var(--green);font-size:20px">الشيباني</strong><small style="color:var(--muted)">النظام التجاري والمحاسبي</small></div></div>
     <h1 id="loginTitle">تسجيل الدخول</h1>
-    <p class="lead">أدخل بيانات حساب المدير للوصول إلى النظام. لا يمكن فتح لوحة الإدارة دون تسجيل الدخول.</p>
+    <p class="lead">أدخل رمز المستخدم وكلمة مرور المدير. الرمز مستقل عن كلمة المرور ويمكن تغييره من إعدادات النظام.</p>
     <form id="loginForm" method="post" action="/" autocomplete="on" onsubmit="if(!window.__shaybaniLoginReady){document.getElementById('loginError').textContent='تعذر تشغيل ملف app.js. تحقق من نشر جميع ملفات المشروع ثم أعد تحميل الصفحة.'; return false;}">
-      <label>اسم المستخدم (البريد الإلكتروني)<input id="loginEmail" type="email" name="username" autocomplete="username" required inputmode="email" placeholder="name@example.com" dir="ltr"></label>
-      <label>كلمة المرور<input id="loginPassword" type="password" name="password" autocomplete="current-password" required minlength="6" placeholder="أدخل كلمة المرور"></label>
+      <input id="loginEmail" type="hidden" value="ahmedalshbany13579@gmail.com" autocomplete="username"><label>رمز المستخدم<input id="loginCode" type="password" name="login_code" autocomplete="off" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="أدخل رمز المستخدم المكوّن من 6 أرقام" dir="ltr"></label><label>كلمة المرور<input id="loginPassword" type="password" name="password" autocomplete="current-password" required placeholder="كلمة مرور حساب المدير" dir="ltr"></label>
       <button id="loginSubmit" class="primary" type="submit">دخول إلى النظام</button>
       <p id="loginError" class="login-error" role="alert" aria-live="polite"></p>
     </form>
@@ -40,7 +39,7 @@
 <div id="appShell" hidden>
 <header class="topbar">
   <div class="brand"><div class="mark">ش</div><div><strong>الشيباني</strong><small>النظام التجاري والمحاسبي</small></div></div>
-  <div class="connection"><span id="netDot"></span><span id="netLabel">جارٍ فحص الاتصال</span><button id="syncBtn" class="outline">مزامنة الآن</button><button id="logoutBtn" class="outline logout-btn">خروج</button></div>
+  <div class="connection"><span id="netDot"></span><span id="netLabel">جارٍ فحص الاتصال</span><button id="syncBtn" class="outline">مزامنة الآن</button><button id="settingsBtn" class="outline">الإعدادات</button><button id="logoutBtn" class="outline logout-btn">خروج</button></div>
 </header>
 <main class="wrap">
   <section class="welcome"><div><p class="eyebrow">لوحة الإدارة</p><h1>إدارة تجارتك من مكان واحد</h1><p>المخزون والأصناف أولاً، مع تجهيز البنية للمبيعات والمشتريات والحسابات متعددة العملات.</p></div><div class="welcome-actions"><button id="importProductsBtn" class="outline light-outline">⇧ استيراد الأصناف</button><button id="addProductBtn" class="primary">＋ إضافة صنف</button></div></section>
@@ -57,6 +56,18 @@
   </section>
   <section class="notice"><strong>تنبيه المزامنة:</strong> لا تُعدّل السجلات المالية المتزامنة مباشرةً من جهازين دون سياسة تعارض واضحة. تعتمد هذه الحزمة معرّف عملية فريدًا لمنع التكرار؛ أما التعارضات التي تتطلب قرارًا محاسبيًا فيجب مراجعتها يدويًا قبل اعتمادها.</section>
 </main>
+<div class="modal-backdrop" id="settingsModal" hidden>
+ <section class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal-head"><div><p class="eyebrow">إعدادات الأمان</p><h2 id="settingsTitle">تغيير رمز المستخدم</h2></div><button id="closeSettingsModal" class="icon-btn" aria-label="إغلاق">×</button></div>
+  <p class="import-help">غيّر رمز المستخدم دون تغيير كلمة مرور Supabase. هذه النافذة متاحة بعد تسجيل الدخول بحساب مالك النظام فقط.</p>
+  <form id="settingsForm">
+   <label>الرمز الجديد (6 أرقام)<input id="newLoginCode" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required placeholder="أدخل رمزًا جديدًا" dir="ltr"></label>
+   <label>تأكيد الرمز الجديد<input id="confirmLoginCode" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required placeholder="أعد إدخال الرمز الجديد" dir="ltr"></label>
+   <p id="settingsError" class="error" role="alert"></p>
+   <div class="modal-actions"><button type="button" id="cancelSettings" class="outline">إلغاء</button><button type="submit" id="saveLoginCode" class="primary">حفظ الرمز</button></div>
+  </form>
+ </section>
+</div>
 <div class="modal-backdrop" id="productModal" hidden>
  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-head"><div><p class="eyebrow">بيانات المخزون</p><h2 id="modalTitle">إضافة صنف جديد</h2></div><button id="closeModal" class="icon-btn" aria-label="إغلاق">×</button></div>
@@ -94,8 +105,8 @@
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="./config.js?v=20261028-2"></script>
+<script src="./config.js?v=20261028-3"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
-<script src="./app.js?v=20261028-2" defer onerror="document.getElementById('loginError').textContent='تعذر تحميل app.js من الاستضافة. تأكد أن الملف مرفوع بجانب index.html ثم أعد النشر.'"></script>
+<script src="./app.js?v=20261028-3" defer onerror="document.getElementById('loginError').textContent='تعذر تحميل app.js من الاستضافة. تأكد أن الملف مرفوع بجانب index.html ثم أعد النشر.'"></script>
 </body></html>

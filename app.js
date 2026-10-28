@@ -162,23 +162,39 @@ async function verifyOwner(user){
 }
 async function handleLogin(e){
  e.preventDefault();
- const email=$('loginEmail').value.trim(),password=$('loginPassword').value;
+ const email=$('loginEmail').value.trim(),code=$('loginCode').value.trim(),password=$('loginPassword').value;
  $('loginError').textContent='';
  if(!supabaseClient){$('loginError').textContent='تعذر تحميل اتصال Supabase. تأكد من رفع config.js وفتح الموقع عبر HTTPS، ثم أعد تحميل الصفحة.';return}
- if(!navigator.onLine){$('loginError').textContent='يلزم الاتصال بالإنترنت لأول تسجيل دخول. اتصل بالإنترنت ثم حاول مجددًا.';return}
- if(!email||!password){$('loginError').textContent='أدخل البريد الإلكتروني وكلمة المرور.';return}
+ if(!navigator.onLine){$('loginError').textContent='يلزم الاتصال بالإنترنت لتسجيل الدخول. اتصل بالإنترنت ثم حاول مجددًا.';return}
+ if(!email||!/^[0-9]{6}$/.test(code)||!password){$('loginError').textContent='أدخل رمز المستخدم المكوّن من 6 أرقام وكلمة المرور.';return}
  const btn=$('loginSubmit');btn.disabled=true;btn.textContent='جارٍ التحقق…';
  try{
+  const pinResult=await supabaseClient.rpc('check_shaybani_login_code',{p_code:code});
+  if(pinResult.error)throw new Error('تعذر التحقق من رمز المستخدم. نفّذ ملف supabase/login_code_settings.sql أولًا. '+pinResult.error.message);
+  if(pinResult.data!==true)throw new Error('رمز المستخدم غير صحيح.');
   const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
   if(error)throw error;
   const check=await verifyOwner(data.user);
   if(!check.ok){await supabaseClient.auth.signOut();throw new Error(check.message)}
-  $('loginPassword').value='';
-  $('statDb').textContent='متصل بحساب المدير';
-  showApp();
- }catch(err){$('loginError').textContent=err.message==='Invalid login credentials'?'بيانات الدخول غير صحيحة. تحقق من البريد الإلكتروني وكلمة المرور.':(err.message||'تعذر تسجيل الدخول. حاول مرة أخرى.')}
+  $('loginCode').value='';$('loginPassword').value='';
+  $('statDb').textContent='متصل بحساب المدير';showApp();
+ }catch(err){$('loginError').textContent=err.message==='Invalid login credentials'?'كلمة المرور غير صحيحة. تحقق منها ثم حاول مجددًا.':(err.message||'تعذر تسجيل الدخول. حاول مرة أخرى.')}
  finally{btn.disabled=false;btn.textContent='دخول إلى النظام'}
 }
+async function saveLoginCode(e){
+ e.preventDefault();$('settingsError').textContent='';
+ const a=$('newLoginCode').value.trim(),b=$('confirmLoginCode').value.trim(),btn=$('saveLoginCode');
+ if(!/^\d{6}$/.test(a)){$('settingsError').textContent='يجب أن يتكون الرمز من 6 أرقام.';return;}
+ if(a!==b){$('settingsError').textContent='الرمزان غير متطابقين.';return;}
+ btn.disabled=true;btn.textContent='جارٍ الحفظ…';
+ try{
+  const {data:{session}}=await supabaseClient.auth.getSession();if(!session)throw new Error('انتهت الجلسة. سجّل الدخول مجددًا.');
+  const {error}=await supabaseClient.rpc('change_shaybani_login_code',{p_new_code:a});if(error)throw error;
+  $('settingsModal').hidden=true;$('settingsForm').reset();toast('تم تغيير رمز المستخدم بنجاح. كلمة المرور لم تتغير.');
+ }catch(err){$('settingsError').textContent=err.message||'تعذر حفظ الرمز.';}
+ finally{btn.disabled=false;btn.textContent='حفظ الرمز';}
+}
+function closeSettings(){$('settingsModal').hidden=true;$('settingsForm').reset();$('settingsError').textContent='';}
 async function logout(){
  if(supabaseClient){try{await supabaseClient.auth.signOut({scope:'local'})}catch(e){console.warn('Local sign out',e)}}
  showLogin(navigator.onLine?'تم تسجيل الخروج.':'تم تسجيل الخروج من هذا الجهاز. يلزم الاتصال بالإنترنت لتسجيل الدخول مجددًا.');
@@ -191,6 +207,8 @@ toast('اتصال المدير قائم، لكن إرسال طابور العم�
 $('loginForm').addEventListener('submit',handleLogin);
  window.__shaybaniLoginReady=true;
 $('logoutBtn').addEventListener('click',logout);
+$('settingsBtn').addEventListener('click',()=>{$('settingsError').textContent='';$('settingsModal').hidden=false;});
+$('closeSettingsModal').addEventListener('click',closeSettings);$('cancelSettings').addEventListener('click',closeSettings);$('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings()});$('settingsForm').addEventListener('submit',saveLoginCode);
 $('importProductsBtn').onclick=()=>{$('importModal').hidden=false};
 $('closeImportModal').onclick=closeImport;$('cancelImport').onclick=closeImport;
 $('importModal').addEventListener('click',e=>{if(e.target===$('importModal'))closeImport()});
