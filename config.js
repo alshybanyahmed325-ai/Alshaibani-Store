@@ -1,6 +1,7 @@
-/* إعدادات الاتصال بمشروع Supabase الخاص بمتجر الشيباني.
-   المفتاح هنا Publishable عام؛ لا تضع أي Secret/service_role في ملفات المتصفح. */
-window.STORE_CONFIG = {
-  SUPABASE_URL: "https://ytcuoafrgdqeahwfjuoq.supabase.co",
-  SUPABASE_ANON_KEY: "sb_publishable_lJWCZQ_hv70OwI2Fiyy7_Q_Q0AkbxLC"
+// إعدادات الاتصال بمشروع Supabase الخاص بمتجر الشيباني.
+// هذا المفتاح عام (publishable) ومخصص للواجهة؛ احمِ الجداول بسياسات RLS.
+// لا تضع service_role أو أي مفتاح سري في هذا الملف.
+window.SHAYBANI_CONFIG = {
+  SUPABASE_URL: "https://jbacufubvsqryjcyhwqu.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_3Irm4rhyjSKsKYE_zAyOwg_VhT4sLHM"
 };
